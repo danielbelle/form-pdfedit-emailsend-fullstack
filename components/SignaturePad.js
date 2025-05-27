@@ -1,16 +1,18 @@
 import { useRef, useEffect } from "react";
 import SignaturePad from "signature_pad";
 
-export default function SignaturePadComponent({ onSave }) {
+export default function SignaturePadComponent({ onSave, value }) {
   const canvasRef = useRef(null);
-  const signaturePadRef = useRef(null); // Adicione esta linha
+  const signaturePadRef = useRef(null);
 
   useEffect(() => {
     signaturePadRef.current = new SignaturePad(canvasRef.current, {
-      backgroundColor: "rgb(255, 255, 255)",
-      penColor: "rgb(0, 0, 0)",
+      backgroundColor: "rgb(255,255,255)",
+      penColor: "rgb(0,0,0)",
+      onEnd: () => {
+        if (onSave) onSave(signaturePadRef.current.toDataURL("image/png"));
+      },
     });
-
     const handleResize = () => {
       const canvas = canvasRef.current;
       const ratio = Math.max(window.devicePixelRatio || 1, 1);
@@ -19,15 +21,26 @@ export default function SignaturePadComponent({ onSave }) {
       canvas.getContext("2d").scale(ratio, ratio);
       signaturePadRef.current.clear();
     };
-
     window.addEventListener("resize", handleResize);
     handleResize();
+    // Restaurar assinatura se existir
+    if (value) {
+      signaturePadRef.current.fromDataURL(value);
+    }
 
     return () => {
       signaturePadRef.current.off();
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
+  // Atualiza assinatura se prop mudar
+  useEffect(() => {
+    if (value && signaturePadRef.current) {
+      signaturePadRef.current.clear();
+      signaturePadRef.current.fromDataURL(value);
+    }
+  }, [value]);
 
   return (
     <div className="space-y-4">

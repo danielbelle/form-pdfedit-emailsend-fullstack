@@ -64,14 +64,24 @@ export default function FormWizard() {
     setFormData((prev) => ({ ...prev, signature }));
   };
 
-  const nextStep = () =>
+  const nextStep = () => {
+    setFormData((prev) => ({ ...prev }));
     setCurrentStep((prev) => Math.min(prev + 1, steps.length));
-  const prevStep = () => setCurrentStep((prev) => Math.max(prev - 1, 1));
+  };
 
+  const prevStep = () => {
+    // Garante que signature e attachments estejam salvos no formData
+    setFormData((prev) => ({
+      ...prev,
+      signature: prev.signature,
+      attachments: prev.attachments,
+    }));
+    setCurrentStep((prev) => Math.max(prev - 1, 1));
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (await validateForm()) {
+    console.log(formData);
+    /*if (await validateForm()) {
       // Processar o formulário
       console.log("Formulário válido:", formData);
     } else {
@@ -84,7 +94,7 @@ export default function FormWizard() {
           block: "center",
         });
       }
-    }
+    }*/
   };
 
   return (
@@ -127,8 +137,14 @@ export default function FormWizard() {
         )}
         {currentStep === 2 && (
           <div className="space-y-6">
-            <SignaturePad onSave={handleSignatureSave} />
-            <FileUpload onFileChange={handleFileUpload} />
+            <SignaturePad
+              onSave={handleSignatureSave}
+              value={formData.signature || ""}
+            />
+            <FileUpload
+              onFileChange={handleFileUpload}
+              value={formData.attachments || []}
+            />
           </div>
         )}
 

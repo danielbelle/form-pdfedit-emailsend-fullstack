@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { z } from "zod";
 
 const fileSchema = z
@@ -15,9 +15,13 @@ const fileSchema = z
     { message: "Selecione apenas arquivos PDF ou imagens." }
   );
 
-export default function FileUpload({ onFileChange }) {
-  const [files, setFiles] = useState([]);
+export default function FileUpload({ onFileChange, value }) {
+  const [files, setFiles] = useState(value || []);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    setFiles(value || []);
+  }, [value]);
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
