@@ -7,7 +7,7 @@ export default function SignaturePadComponent({ onSave, value }) {
 
   useEffect(() => {
     signaturePadRef.current = new SignaturePad(canvasRef.current, {
-      backgroundColor: "rgb(255,255,255)",
+      backgroundColor: "rgba(255, 255, 255, 0)",
       penColor: "rgb(0,0,0)",
       onEnd: () => {
         if (onSave) onSave(signaturePadRef.current.toDataURL("image/png"));

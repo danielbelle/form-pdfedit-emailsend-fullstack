@@ -71,57 +71,27 @@ export default function EmailPreview({ formData }) {
         <p className="mt-4">Atenciosamente, </p>
         <span className="font-bold"> {formData.name}</span>.
       </div>
+      <h2 className="text-xl font-bold mb-4">Baixar Assinatura</h2>
+
       <div className="bg-gray-50 p-4 rounded border">
-        <p>
-          <b>Nome:</b> {formData.name}
-        </p>
-        <p>
-          <b>Email:</b> {formData.email}
-        </p>
-        <p>
-          <b>RG:</b> {formData.docRG}
-        </p>
-        <p>
-          <b>CPF:</b> {formData.docCPF}
-        </p>
-        <p>
-          <b>Telefone:</b> {formData.phone}
-        </p>
-        <p>
-          <b>Cidade Transporte:</b> {formData.city}
-        </p>
-        <p>
-          <b>Instituição:</b> {formData.institution}
-        </p>
-        <p>
-          <b>Curso:</b> {formData.course}
-        </p>
-        <p>
-          <b>Período:</b> {formData.period}
-        </p>
-        <p>
-          <b>Mês:</b> {formData.month}
-        </p>
-        <p>
-          <b>Vezes no mês:</b> {formData.timesInMonth}
-        </p>
-        <p>
-          <b>Comprovante:</b>{" "}
-          {formData.attachments && formData.attachments[0]?.name}
-        </p>
-        <p>
-          <b>Assinatura:</b>
-        </p>
         {formData.signature && (
-          <img
-            src={formData.signature}
-            alt="Assinatura"
-            style={{
-              maxWidth: 300,
-              border: "1px solid #ccc",
-              background: "#fff",
-            }}
-          />
+          <a
+            href={formData.signature}
+            download="assinatura.png"
+            title="Clique para baixar a assinatura"
+            style={{ display: "inline-block" }}
+          >
+            <img
+              src={formData.signature}
+              alt="Assinatura"
+              style={{
+                maxWidth: "mx-auto",
+                border: "1px solid #ccc",
+                background: "#fff",
+                cursor: "pointer",
+              }}
+            />
+          </a>
         )}
       </div>
       {loading && (
@@ -129,15 +99,6 @@ export default function EmailPreview({ formData }) {
       )}
       {pdfUrl && (
         <div className="mt-4 space-y-2">
-          <a
-            href={pdfUrl}
-            download="documento-assinado.pdf"
-            className="text-blue-700 underline"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Baixar PDF Assinado
-          </a>
           <div className="mt-4">
             <iframe
               src={pdfUrl}

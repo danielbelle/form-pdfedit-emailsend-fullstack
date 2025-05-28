@@ -46,7 +46,8 @@ export default function FormWizard() {
   const steps = [
     { id: 1, name: "Dados para Preencher" },
     { id: 2, name: "Assinatura e Comprovante" },
-    { id: 3, name: "Confirmação de Dados" },
+    { id: 3, name: "Confirmar PDF e Assinatura" },
+    { id: 4, name: "Prévia de Email e Enviar" },
   ];
 
   const handleChange = (e) => {
@@ -100,7 +101,7 @@ export default function FormWizard() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md">
+    <div className="md:max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-md max-w-xl">
       {/* Progress Steps */}
       <div className="flex justify-between mb-8">
         {steps.map((step) => (
