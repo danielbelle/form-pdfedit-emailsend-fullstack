@@ -45,6 +45,7 @@ export default function FormWizard() {
   const steps = [
     { id: 1, name: "Dados para Preencher" },
     { id: 2, name: "Assinatura e Comprovante" },
+    { id: 3, name: "Confirmação de Dados" },
   ];
 
   const handleChange = (e) => {
@@ -174,7 +175,7 @@ export default function FormWizard() {
               type="submit"
               className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 ml-auto"
             >
-              Conferir Modelo
+              Enviar Email
             </button>
           )}
         </div>

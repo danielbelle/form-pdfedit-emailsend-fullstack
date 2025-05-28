@@ -44,7 +44,7 @@ export default function SignaturePadComponent({ onSave, value }) {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-medium">Assinatura Digital</h3>
+      <h3 className="text-xl font-semibold mb-4">Assinatura Digital</h3>
       <div className="border border-gray-300 rounded-lg p-4">
         <canvas
           ref={canvasRef}
@@ -57,7 +57,7 @@ export default function SignaturePadComponent({ onSave, value }) {
           onClick={() => onSave(canvasRef.current.toDataURL("image/png"))}
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >
-          Assinatura Feita
+          Confirmar Assinatura
         </button>
         <button
           type="button"
@@ -66,7 +66,7 @@ export default function SignaturePadComponent({ onSave, value }) {
           }}
           className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
         >
-          Limpar Assinatura
+          Limpar Tudo
         </button>
         <button
           type="button"
@@ -79,7 +79,7 @@ export default function SignaturePadComponent({ onSave, value }) {
           }}
           className="px-4 py-2 bg-yellow-400 text-gray-900 rounded hover:bg-yellow-500"
         >
-          Desfazer
+          Voltar Último Traço
         </button>
       </div>
     </div>

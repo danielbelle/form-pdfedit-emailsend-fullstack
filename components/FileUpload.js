@@ -44,7 +44,7 @@ export default function FileUpload({ onFileChange, value }) {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-medium">Comprovante de Presenças</h3>
+      <h3 className="text-xl font-semibold mb-4">Comprovante de Presença</h3>
       <div className="border border-gray-300 rounded-lg p-4">
         <input
           type="file"
