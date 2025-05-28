@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { fillPdf } from "../../utils/editPdf";
+import PdfAndSignaturePreview from "./PdfAndSignaturePreview";
 
 export default function EmailPreview({ formData }) {
   const [pdfUrl, setPdfUrl] = useState(null);
@@ -35,30 +36,24 @@ export default function EmailPreview({ formData }) {
           <span className="font-bold"> {formData.name}</span>.
         </p>
         <p className="mt-4">
-          <p>
-            No mesmo contém o anexo da Declaração do auxílio transporte,
-            previsto na
-          </p>
           <span>
+            No mesmo contém o anexo da Declaração do auxílio transporte,
+            previsto na{" "}
             <a
               className="hover:underline text-blue-700"
               href={docLei2721}
               target="_blank"
               rel="noopener noreferrer"
             >
-              {" "}
               Lei Municipal nº 2.721/2011
             </a>
-          </span>
-          <span>, que regulamenta o auxílio transporte, alterada pela</span>
-          <span>
+            , que regulamenta o auxílio transporte, alterada pela{" "}
             <a
               className="hover:underline text-blue-700"
               href={docLei3647}
               target="_blank"
               rel="noopener noreferrer"
             >
-              {" "}
               Lei Municipal nº 3.647/2025
             </a>
             .
@@ -71,45 +66,6 @@ export default function EmailPreview({ formData }) {
         <p className="mt-4">Atenciosamente, </p>
         <span className="font-bold"> {formData.name}</span>.
       </div>
-      <h2 className="text-xl font-bold mb-4">Baixar Assinatura</h2>
-
-      <div className="bg-gray-50 p-4 rounded border">
-        {formData.signature && (
-          <a
-            href={formData.signature}
-            download="assinatura.png"
-            title="Clique para baixar a assinatura"
-            style={{ display: "inline-block" }}
-          >
-            <img
-              src={formData.signature}
-              alt="Assinatura"
-              style={{
-                maxWidth: "mx-auto",
-                border: "1px solid #ccc",
-                background: "#fff",
-                cursor: "pointer",
-              }}
-            />
-          </a>
-        )}
-      </div>
-      {loading && (
-        <div className="text-blue-600 font-medium">Gerando PDF...</div>
-      )}
-      {pdfUrl && (
-        <div className="mt-4 space-y-2">
-          <div className="mt-4">
-            <iframe
-              src={pdfUrl}
-              title="Pré-visualização do PDF"
-              width="100%"
-              height="500px"
-              style={{ border: "1px solid #ccc", borderRadius: 8 }}
-            />
-          </div>
-        </div>
-      )}
     </div>
   );
 }

@@ -4,6 +4,7 @@ import FileUpload from "../FileUpload";
 import SignaturePad from "../SignaturePad";
 import EmailPreview from "../email/EmailPreview";
 import { z } from "zod";
+import PdfAndSignaturePreview from "../email/PdfAndSignaturePreview";
 
 export default function FormWizard() {
   const [errors, setErrors] = useState({});
@@ -150,7 +151,9 @@ export default function FormWizard() {
             />
           </div>
         )}
-        {currentStep === 3 && <EmailPreview formData={formData} />}
+        {currentStep === 3 && <PdfAndSignaturePreview formData={formData} />}
+
+        {currentStep === 4 && <EmailPreview formData={formData} />}
 
         <div className="flex mt-8">
           {currentStep > 1 && (
