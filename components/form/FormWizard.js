@@ -2,6 +2,7 @@ import { useState } from "react";
 import PersonalInfoStep from "./PersonalInfoStep";
 import FileUpload from "../FileUpload";
 import SignaturePad from "../SignaturePad";
+import EmailPreview from "../email/EmailPreview";
 import { z } from "zod";
 
 export default function FormWizard() {
@@ -148,6 +149,7 @@ export default function FormWizard() {
             />
           </div>
         )}
+        {currentStep === 3 && <EmailPreview formData={formData} />}
 
         <div className="flex mt-8">
           {currentStep > 1 && (
