@@ -25,7 +25,7 @@ export default function PdfAndSignaturePreview({ formData }) {
     <div className="space-y-6">
       <h2 className="text-xl font-bold mb-4">Assinatura e PDF Gerado</h2>
       <div className="bg-gray-50 p-4 rounded border">
-        {formData.signature && (
+        {formData.signature ? (
           <>
             <img
               src={formData.signature}
@@ -48,22 +48,95 @@ export default function PdfAndSignaturePreview({ formData }) {
               Clique na assinatura para baixar
             </div>
           </>
+        ) : (
+          <div className="text-red-600 text-sm mt-2">
+            Nenhuma assinatura criada.
+          </div>
+        )}
+
+        {loading && (
+          <div className="text-blue-600 font-medium">Gerando PDF...</div>
+        )}
+        {pdfUrl && (
+          <div className="mt-4">
+            <iframe
+              src={pdfUrl}
+              title="Pré-visualização do PDF"
+              width="100%"
+              height="500px"
+              style={{ border: "1px solid #ccc", borderRadius: 8 }}
+            />
+          </div>
+        )}
+
+        {/* Exibir anexo depois do PDF gerado */}
+        {formData.attachments && formData.attachments.length > 0 && (
+          <div className="mt-6">
+            <h4 className="font-semibold mb-2">Comprovante Anexado:</h4>
+            {formData.attachments.map((file, idx) => {
+              // Gera URL local apenas se não existir
+              let url = file.url;
+              if (!url) {
+                url = URL.createObjectURL(file);
+              }
+              // Permite apenas blobs locais ou arquivos sem http/https
+              const isSafeUrl =
+                url.startsWith("blob:") ||
+                url.startsWith("data:") ||
+                (!url.startsWith("http://") && !url.startsWith("https://"));
+
+              // Se não for seguro, apenas mostra o nome do arquivo
+              if (!isSafeUrl) {
+                return (
+                  <div key={idx} className="text-red-600">
+                    Arquivo não suportado ou potencialmente inseguro:{" "}
+                    {file.name}
+                  </div>
+                );
+              }
+
+              // Se for imagem, mostrar preview
+              if (
+                file.type &&
+                (file.type.startsWith("image/") ||
+                  file.name.match(/\.(png|jpg|jpeg|webp)$/i))
+              ) {
+                return (
+                  <img
+                    key={idx}
+                    src={url}
+                    alt={file.name}
+                    className="mb-2 max-h-48 border rounded"
+                    style={{ maxWidth: 300 }}
+                  />
+                );
+              }
+              // Se for PDF, mostrar embed
+              if (
+                file.type === "application/pdf" ||
+                file.name.match(/\.pdf$/i)
+              ) {
+                return (
+                  <iframe
+                    key={idx}
+                    src={url}
+                    title={file.name}
+                    width="100%"
+                    height="400px"
+                    className="border rounded mb-2"
+                  />
+                );
+              }
+              // Caso não reconhecido, apenas mostra o nome
+              return (
+                <div key={idx} className="text-gray-700">
+                  {file.name}
+                </div>
+              );
+            })}
+          </div>
         )}
       </div>
-      {loading && (
-        <div className="text-blue-600 font-medium">Gerando PDF...</div>
-      )}
-      {pdfUrl && (
-        <div className="mt-4">
-          <iframe
-            src={pdfUrl}
-            title="Pré-visualização do PDF"
-            width="100%"
-            height="500px"
-            style={{ border: "1px solid #ccc", borderRadius: 8 }}
-          />
-        </div>
-      )}
     </div>
   );
 }

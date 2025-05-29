@@ -11,10 +11,10 @@ export default async function handler(req, res) {
     const { formData, pdfBytes, attachments } = req.body;
 
     const msg = {
-      to: formData.email || "recipient@example.com",
+      to: process.env.EMAIL_RECEIVER || "recipient@example.com",
       from: process.env.EMAIL_FROM || "no-reply@example.com",
-      subject: "Your Completed Form",
-      text: "Please find attached your completed form.",
+      subject: formData.name + " - Auxilio Transporte",
+      text: "123321",
       html: "<strong>Please find attached your completed form.</strong>",
       attachments: [
         {
@@ -35,6 +35,6 @@ export default async function handler(req, res) {
     res.status(200).json({ success: true });
   } catch (error) {
     console.error("Error sending email:", error);
-    res.status(500).json({ error: "Failed to send email" });
+    res.status(500).json({ error: "Falha ao enviar o e-mail" });
   }
 }
