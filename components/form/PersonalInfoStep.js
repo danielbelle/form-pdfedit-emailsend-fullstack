@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { z } from "zod";
 
-// Esquema de validação Zod
+// Atualize o schema para aceitar semestre como número
 const formSchema = z.object({
   name: z.string().min(3, "Nome deve ter pelo menos 3 caracteres"),
   email: z.string().email("E-mail inválido"),
@@ -22,9 +22,7 @@ const formSchema = z.object({
 
     return rest(10) === digits[9] && rest(11) === digits[10];
   }, "CPF inválido"),
-  period: z.enum(["matutino", "vespertino", "noturno", "integral"], {
-    errorMap: () => ({ message: "Selecione um período válido" }),
-  }),
+  period: z.string(),
   institution: z
     .string()
     .min(3, "Instituição deve ter pelo menos 3 caracteres"),
@@ -41,33 +39,33 @@ export default function PersonalInfoStep({
   errors,
   setErrors,
 }) {
-  const [periodOptions] = useState([
-    { value: "matutino", label: "Matutino" },
-    { value: "vespertino", label: "Vespertino" },
-    { value: "noturno", label: "Noturno" },
-    { value: "integral", label: "Integral" },
-  ]);
+  const [semesterOptions] = useState(
+    Array.from({ length: 12 }, (_, i) => ({
+      value: i + 1,
+      label: `${i + 1}º Semestre`,
+    }))
+  );
 
   const [monthOptions] = useState([
-    { value: "1", label: "Janeiro" },
-    { value: "2", label: "Fevereiro" },
-    { value: "3", label: "Março" },
-    { value: "4", label: "Abril" },
-    { value: "5", label: "Maio" },
-    { value: "6", label: "Junho" },
-    { value: "7", label: "Julho" },
-    { value: "8", label: "Agosto" },
-    { value: "9", label: "Setembro" },
-    { value: "10", label: "Outubro" },
-    { value: "11", label: "Novembro" },
-    { value: "12", label: "Dezembro" },
+    { value: "Janeiro", label: "Janeiro" },
+    { value: "Fevereiro", label: "Fevereiro" },
+    { value: "Março", label: "Março" },
+    { value: "Abril", label: "Abril" },
+    { value: "Maio", label: "Maio" },
+    { value: "Junho", label: "Junho" },
+    { value: "Julho", label: "Julho" },
+    { value: "Agosto", label: "Agosto" },
+    { value: "Setembro", label: "Setembro" },
+    { value: "Outubro", label: "Outubro" },
+    { value: "Novembro", label: "Novembro" },
+    { value: "Dezembro", label: "Dezembro" },
   ]);
 
   // Seleciona o mês atual como padrão se não houver valor em formData.month
   const currentMonth = String(new Date().getMonth() + 2);
 
-  // Deixe o período "noturno" como padrão se não houver valor em formData.period
-  const defaultPeriod = "noturno";
+  // Deixe o semestre 1 como padrão se não houver valor em formData.period
+  const defaultSemester = 1;
 
   const validateField = async (name, value) => {
     try {
@@ -287,25 +285,32 @@ export default function PersonalInfoStep({
           )}
         </div>
       </div>
-      {/* Período, Mês e Vezes no Mês */}
+      {/* Período (Semestre), Mês e Vezes no Mês */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
           <label className="block text-md font-medium text-gray-700 mb-1">
-            Período *
+            Semestre *
           </label>
           <select
             name="period"
-            value={formData.period || defaultPeriod}
-            onChange={handleChange}
+            value={formData.period || defaultSemester}
+            onChange={(e) =>
+              handleChange({
+                target: {
+                  name: "period",
+                  value: Number(e.target.value),
+                },
+              })
+            }
             onBlur={handleBlur}
             className={`w-full p-2 border ${
               errors.period ? "border-red-500" : "border-gray-300"
             } rounded`}
           >
             <option value="" disabled>
-              Selecione
+              Selecione o semestre
             </option>
-            {periodOptions.map((option) => (
+            {semesterOptions.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
               </option>

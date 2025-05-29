@@ -50,7 +50,7 @@ export default function FileUpload({ onFileChange, value }) {
           type="file"
           accept="application/pdf,image/*"
           onChange={handleFileChange}
-          className="block w-full text-sm text-gray-500
+          className="block w-1/2 text-sm text-gray-500
             file:mr-4 file:py-2 file:px-4
             file:rounded file:border-0
             file:text-sm file:font-semibold
