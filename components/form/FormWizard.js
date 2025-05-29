@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PersonalInfoStep from "./PersonalInfoStep";
 import FileUpload from "../FileUpload";
 import SignaturePad from "../SignaturePad";
@@ -25,6 +25,7 @@ export default function FormWizard() {
     signatureName: "",
     inputDocument: null,
   });
+  const [showSubmit, setShowSubmit] = useState(false);
 
   // Valida todo o formulário
   const validateForm = async () => {
@@ -50,6 +51,16 @@ export default function FormWizard() {
     { id: 3, name: "Confirmar PDF e Assinatura" },
     { id: 4, name: "Prévia de Email e Enviar" },
   ];
+
+  useEffect(() => {
+    if (currentStep === steps.length) {
+      setShowSubmit(false);
+      const timer = setTimeout(() => setShowSubmit(true), 2000);
+      return () => clearTimeout(timer);
+    } else {
+      setShowSubmit(false);
+    }
+  }, [currentStep, steps.length]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -84,21 +95,34 @@ export default function FormWizard() {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
-    /*if (await validateForm()) {
-      // Processar o formulário
-      console.log("Formulário válido:", formData);
-    } else {
-      console.log("Corrija os erros no formulário");
-      // Rolagem para o primeiro erro
-      const firstError = Object.keys(errors)[0];
-      if (firstError) {
-        document.querySelector(`[name="${firstError}"]`)?.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-        });
+
+    const confirmSend = window.confirm(
+      "Você deseja realmente enviar o e-mail?"
+    );
+    if (!confirmSend) return;
+
+    const formDataObj = new FormData(e.target);
+
+    // Adicione manualmente os arquivos se não estiverem no <input>
+    if (formData.attachments) {
+      for (let i = 0; i < formData.attachments.length; i++) {
+        formDataObj.append("attachments", formData.attachments[i]);
       }
-    }*/
+    }
+
+    try {
+      const response = await fetch("/api/sendEmail", {
+        method: "POST",
+        body: formDataObj,
+      });
+      if (response.ok) {
+        alert("Email enviado com sucesso!");
+      } else {
+        alert("Falha ao enviar email.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
   return (
@@ -177,12 +201,14 @@ export default function FormWizard() {
               Avançar
             </button>
           ) : (
-            <button
-              type="submit"
-              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 ml-auto"
-            >
-              Enviar Email
-            </button>
+            showSubmit && (
+              <button
+                type="submit"
+                className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 ml-auto"
+              >
+                Enviar Email
+              </button>
+            )
           )}
         </div>
       </form>
