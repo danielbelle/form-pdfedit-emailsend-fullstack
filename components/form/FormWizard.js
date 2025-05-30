@@ -101,19 +101,40 @@ export default function FormWizard() {
     );
     if (!confirmSend) return;
 
-    const formDataObj = new FormData(e.target);
+    // Monte o array de anexos (FileUpload + PDF editado)
+    const attachments = [];
 
-    // Adicione manualmente os arquivos se não estiverem no <input>
+    // Adicione arquivos do FileUpload
     if (formData.attachments) {
       for (let i = 0; i < formData.attachments.length; i++) {
-        formDataObj.append("attachments", formData.attachments[i]);
+        const file = formData.attachments[i];
+        const base64 = await toBase64(file);
+        attachments.push({
+          filename: file.name,
+          content: base64.split(",")[1], // remove o prefixo data:...
+          contentType: file.type,
+        });
       }
     }
 
+    // Adicione o PDF editado, se existir
+    if (formData.pdfEdited) {
+      attachments.push({
+        filename: "documento-editado.pdf",
+        content: formData.pdfEdited.split(",")[1], // base64 puro
+        contentType: "application/pdf",
+      });
+    }
+
+    // Envie como JSON
     try {
       const response = await fetch("/api/sendEmail", {
         method: "POST",
-        body: formDataObj,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...formData,
+          attachments,
+        }),
       });
       if (response.ok) {
         alert("Email enviado com sucesso!");
@@ -124,6 +145,16 @@ export default function FormWizard() {
       console.error("Error:", error);
     }
   };
+
+  // Função auxiliar para converter arquivo em base64
+  function toBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  }
 
   return (
     <div className="md:max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-md max-w-xl">
