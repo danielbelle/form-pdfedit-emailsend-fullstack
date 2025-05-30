@@ -206,8 +206,14 @@ export default function FormWizard() {
             />
           </div>
         )}
-        {currentStep === 3 && <PdfAndSignaturePreview formData={formData} />}
-
+        {currentStep === 3 && (
+          <PdfAndSignaturePreview
+            formData={formData}
+            onPdfGenerated={(pdfBase64) =>
+              setFormData((prev) => ({ ...prev, pdfEdited: pdfBase64 }))
+            }
+          />
+        )}
         {currentStep === 4 && <EmailPreview formData={formData} />}
 
         <div className="flex mt-8">

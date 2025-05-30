@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { fillPdf } from "../../utils/editPdf";
 
-export default function PdfAndSignaturePreview({ formData }) {
+export default function PdfAndSignaturePreview({ formData, onPdfGenerated }) {
   const [pdfUrl, setPdfUrl] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -12,6 +12,15 @@ export default function PdfAndSignaturePreview({ formData }) {
         const pdfBytes = await fillPdf(formData, formData.signature);
         const blob = new Blob([pdfBytes], { type: "application/pdf" });
         setPdfUrl(URL.createObjectURL(blob));
+
+        // Salva o PDF em base64 no formData
+        const reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.onloadend = () => {
+          if (onPdfGenerated) {
+            onPdfGenerated(reader.result); // base64 string
+          }
+        };
       } catch (err) {
         alert("Erro ao gerar PDF");
       }
