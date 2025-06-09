@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from "react";
+"use client";
+import { useState, useEffect, useRef, use } from "react";
 import PersonalInfoStep from "./PersonalInfoStep";
 import FileUpload from "../FileUpload";
 import SignaturePad from "../SignaturePad";
@@ -54,6 +55,8 @@ export default function FormWizard() {
   ];
 
   useEffect(() => {
+    document.title =
+      "Formulário de Solicitação - Preencha os dados para solicitar o auxílio";
     if (currentStep === steps.length) {
       setShowSubmit(false);
       const timer = setTimeout(() => setShowSubmit(true), 2000);
@@ -108,7 +111,9 @@ export default function FormWizard() {
     e.preventDefault();
 
     const confirmSend = window.confirm(
-      "Você deseja realmente enviar o e-mail?"
+      "Seu email será enviado com a solicitação preenchida para " +
+        (process.env.NEXT_PUBLIC_EMAIL_RECEIVER || "o destinatário padrão") +
+        ". Deseja continuar?"
     );
     if (!confirmSend) return;
 
