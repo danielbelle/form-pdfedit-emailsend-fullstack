@@ -1,7 +1,7 @@
 import { useRef, useEffect, forwardRef, useImperativeHandle } from "react";
 import SignaturePad from "signature_pad";
 
-const SignaturePadComponent = forwardRef(({ onSave, value }, ref) => {
+const SignaturePad = forwardRef(({ onSave, value }, ref) => {
   const canvasRef = useRef(null);
   const signaturePadRef = useRef(null);
 
@@ -83,4 +83,4 @@ const SignaturePadComponent = forwardRef(({ onSave, value }, ref) => {
   );
 });
 
-export default SignaturePadComponent;
+export default SignaturePad;
