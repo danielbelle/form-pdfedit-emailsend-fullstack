@@ -6,9 +6,7 @@ const SignaturePadComponent = forwardRef(({ onSave, value }, ref) => {
   const signaturePadRef = useRef(null);
 
   useImperativeHandle(ref, () => ({
-    toDataURL: () => signaturePadRef.current?.toDataURL("image/png"),
-    clear: () => signaturePadRef.current?.clear(),
-    fromDataURL: (dataUrl) => signaturePadRef.current?.fromDataURL(dataUrl),
+    toDataURL: () => signaturePadRef.current.toDataURL("image/png"),
   }));
 
   useEffect(() => {
@@ -26,26 +24,27 @@ const SignaturePadComponent = forwardRef(({ onSave, value }, ref) => {
       canvas.height = canvas.offsetHeight * ratio;
       canvas.getContext("2d").scale(ratio, ratio);
       signaturePadRef.current.clear();
-      if (onSave) onSave(signaturePadRef.current.toDataURL("image/png"));
     };
     window.addEventListener("resize", handleResize);
     handleResize();
+    // Restaurar assinatura se existir
     if (value) {
       signaturePadRef.current.fromDataURL(value);
     }
+
     return () => {
       signaturePadRef.current.off();
       window.removeEventListener("resize", handleResize);
     };
   }, []);
 
+  // Atualiza assinatura se prop mudar
   useEffect(() => {
-    if (signaturePadRef.current && value) {
+    if (value && signaturePadRef.current) {
       signaturePadRef.current.clear();
       signaturePadRef.current.fromDataURL(value);
     }
-    // eslint-disable-next-line
-  }, [value, canvasRef]);
+  }, [value]);
 
   return (
     <div className="space-y-4">
@@ -61,7 +60,6 @@ const SignaturePadComponent = forwardRef(({ onSave, value }, ref) => {
           type="button"
           onClick={() => {
             signaturePadRef.current.clear();
-            if (onSave) onSave(signaturePadRef.current.toDataURL("image/png"));
           }}
           className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
         >
@@ -72,10 +70,8 @@ const SignaturePadComponent = forwardRef(({ onSave, value }, ref) => {
           onClick={() => {
             const data = signaturePadRef.current.toData();
             if (data.length > 0) {
-              data.pop();
+              data.pop(); // Remove o último traço
               signaturePadRef.current.fromData(data);
-              if (onSave)
-                onSave(signaturePadRef.current.toDataURL("image/png"));
             }
           }}
           className="px-4 py-2 bg-yellow-400 text-gray-900 rounded hover:bg-yellow-500"
