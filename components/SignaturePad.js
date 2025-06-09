@@ -1,7 +1,7 @@
 import { useRef, useEffect, forwardRef, useImperativeHandle } from "react";
 import SignaturePad from "signature_pad";
 
-const SignaturePadComponent = forwardRef(({ onSave, value }, ref) => {
+const SignaturePadComponent = forwardRef(({ value }, ref) => {
   const canvasRef = useRef(null);
   const signaturePadRef = useRef(null);
 
@@ -13,9 +13,6 @@ const SignaturePadComponent = forwardRef(({ onSave, value }, ref) => {
     signaturePadRef.current = new SignaturePad(canvasRef.current, {
       backgroundColor: "rgba(255, 255, 255, 0)",
       penColor: "rgb(0,0,0)",
-      onEnd: () => {
-        if (onSave) onSave(signaturePadRef.current.toDataURL("image/png"));
-      },
     });
     const handleResize = () => {
       const canvas = canvasRef.current;
