@@ -3,7 +3,7 @@ import PersonalInfoStep from "./PersonalInfoStep";
 import FileUpload from "../FileUpload";
 import SignaturePad from "../SignaturePad";
 import EmailPreview from "../email/EmailPreview";
-import { z } from "zod";
+import { number, z } from "zod";
 import PdfAndSignaturePreview from "../email/PdfAndSignaturePreview";
 
 export default function FormWizard() {
@@ -18,7 +18,7 @@ export default function FormWizard() {
     institution: "",
     course: "",
     month: "",
-    timesInMonth: 0,
+    timesInMonth: "",
     city: "",
     phone: "",
     sign: "",
