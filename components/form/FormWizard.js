@@ -88,15 +88,9 @@ export default function FormWizard() {
     setCurrentStep((prev) => Math.min(prev + 1, steps.length));
   };
 
-  const saveSignatureBetweenSteps = () => {
-    if (signaturePadRef.current) {
-      // Salva a assinatura atual do canvas
-      handleSignatureSave(signaturePadRef.current.toDataURL("image/png"));
-    }
-  };
-
   const prevStep = () => {
-    // Garante que signature e attachments estejam salvos no formData
+    // Salva a assinatura ao voltar também
+    saveSignatureBetweenSteps();
     setFormData((prev) => ({
       ...prev,
       signature: prev.signature,
@@ -104,6 +98,13 @@ export default function FormWizard() {
     }));
     setCurrentStep((prev) => Math.max(prev - 1, 1));
   };
+
+  const saveSignatureBetweenSteps = () => {
+    if (signaturePadRef.current) {
+      handleSignatureSave(signaturePadRef.current.toDataURL("image/png"));
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 

@@ -1,18 +1,23 @@
 import { useRef, useEffect, forwardRef, useImperativeHandle } from "react";
 import SignaturePad from "signature_pad";
 
-const SignaturePadComponent = forwardRef(({ value }, ref) => {
+const SignaturePadComponent = forwardRef(({ onSave, value }, ref) => {
   const canvasRef = useRef(null);
   const signaturePadRef = useRef(null);
 
   useImperativeHandle(ref, () => ({
-    toDataURL: () => signaturePadRef.current.toDataURL("image/png"),
+    toDataURL: () => signaturePadRef.current?.toDataURL("image/png"),
+    clear: () => signaturePadRef.current?.clear(),
+    fromDataURL: (dataUrl) => signaturePadRef.current?.fromDataURL(dataUrl),
   }));
 
   useEffect(() => {
     signaturePadRef.current = new SignaturePad(canvasRef.current, {
       backgroundColor: "rgba(255, 255, 255, 0)",
       penColor: "rgb(0,0,0)",
+      onEnd: () => {
+        if (onSave) onSave(signaturePadRef.current.toDataURL("image/png"));
+      },
     });
     const handleResize = () => {
       const canvas = canvasRef.current;
@@ -21,27 +26,26 @@ const SignaturePadComponent = forwardRef(({ value }, ref) => {
       canvas.height = canvas.offsetHeight * ratio;
       canvas.getContext("2d").scale(ratio, ratio);
       signaturePadRef.current.clear();
+      if (onSave) onSave(signaturePadRef.current.toDataURL("image/png"));
     };
     window.addEventListener("resize", handleResize);
     handleResize();
-    // Restaurar assinatura se existir
     if (value) {
       signaturePadRef.current.fromDataURL(value);
     }
-
     return () => {
       signaturePadRef.current.off();
       window.removeEventListener("resize", handleResize);
     };
   }, []);
 
-  // Atualiza assinatura se prop mudar
   useEffect(() => {
-    if (value && signaturePadRef.current) {
+    if (signaturePadRef.current && value) {
       signaturePadRef.current.clear();
       signaturePadRef.current.fromDataURL(value);
     }
-  }, [value]);
+    // eslint-disable-next-line
+  }, [value, canvasRef]);
 
   return (
     <div className="space-y-4">
@@ -57,6 +61,7 @@ const SignaturePadComponent = forwardRef(({ value }, ref) => {
           type="button"
           onClick={() => {
             signaturePadRef.current.clear();
+            if (onSave) onSave(signaturePadRef.current.toDataURL("image/png"));
           }}
           className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
         >
@@ -67,8 +72,10 @@ const SignaturePadComponent = forwardRef(({ value }, ref) => {
           onClick={() => {
             const data = signaturePadRef.current.toData();
             if (data.length > 0) {
-              data.pop(); // Remove o último traço
+              data.pop();
               signaturePadRef.current.fromData(data);
+              if (onSave)
+                onSave(signaturePadRef.current.toDataURL("image/png"));
             }
           }}
           className="px-4 py-2 bg-yellow-400 text-gray-900 rounded hover:bg-yellow-500"
