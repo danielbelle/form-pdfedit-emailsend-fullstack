@@ -1,9 +1,13 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, forwardRef, useImperativeHandle } from "react";
 import SignaturePad from "signature_pad";
 
-export default function SignaturePadComponent({ onSave, value }) {
+const SignaturePadComponent = forwardRef(({ onSave, value }, ref) => {
   const canvasRef = useRef(null);
   const signaturePadRef = useRef(null);
+
+  useImperativeHandle(ref, () => ({
+    toDataURL: () => signaturePadRef.current.toDataURL("image/png"),
+  }));
 
   useEffect(() => {
     signaturePadRef.current = new SignaturePad(canvasRef.current, {
@@ -54,13 +58,6 @@ export default function SignaturePadComponent({ onSave, value }) {
       <div className="flex space-x-4">
         <button
           type="button"
-          onClick={() => onSave(canvasRef.current.toDataURL("image/png"))}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          Confirmar Assinatura
-        </button>
-        <button
-          type="button"
           onClick={() => {
             signaturePadRef.current.clear();
           }}
@@ -84,4 +81,6 @@ export default function SignaturePadComponent({ onSave, value }) {
       </div>
     </div>
   );
-}
+});
+
+export default SignaturePadComponent;

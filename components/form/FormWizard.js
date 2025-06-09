@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import PersonalInfoStep from "./PersonalInfoStep";
 import FileUpload from "../FileUpload";
 import SignaturePad from "../SignaturePad";
@@ -26,6 +26,7 @@ export default function FormWizard() {
     inputDocument: null,
   });
   const [showSubmit, setShowSubmit] = useState(false);
+  const signaturePadRef = useRef(null);
 
   // Valida todo o formulário
   const validateForm = async () => {
@@ -80,8 +81,18 @@ export default function FormWizard() {
   };
 
   const nextStep = () => {
+    if (currentStep === 2) {
+      saveSignatureBetweenSteps();
+    }
     setFormData((prev) => ({ ...prev }));
     setCurrentStep((prev) => Math.min(prev + 1, steps.length));
+  };
+
+  const saveSignatureBetweenSteps = () => {
+    if (signaturePadRef.current) {
+      // Salva a assinatura atual do canvas
+      handleSignatureSave(signaturePadRef.current.toDataURL("image/png"));
+    }
   };
 
   const prevStep = () => {
@@ -197,6 +208,7 @@ export default function FormWizard() {
         {currentStep === 2 && (
           <div className="space-y-6">
             <SignaturePad
+              ref={signaturePadRef}
               onSave={handleSignatureSave}
               value={formData.signature || ""}
             />
