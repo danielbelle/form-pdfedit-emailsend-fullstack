@@ -1,17 +1,28 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { fillPdf } from "../../utils/editPdf";
 
 export default function PdfAndSignaturePreview({ formData, onPdfGenerated }) {
   const [pdfUrl, setPdfUrl] = useState(null);
   const [loading, setLoading] = useState(false);
+  const prevUrl = useRef(null);
 
   useEffect(() => {
+    let isMounted = true;
     const generatePdf = async () => {
       setLoading(true);
       try {
         const pdfBytes = await fillPdf(formData, formData.signature);
         const blob = new Blob([pdfBytes], { type: "application/pdf" });
-        setPdfUrl(URL.createObjectURL(blob));
+
+        // Revoga o URL anterior para evitar vazamento de memória e recarregamento desnecessário
+        if (prevUrl.current) {
+          URL.revokeObjectURL(prevUrl.current);
+        }
+        const url = URL.createObjectURL(blob);
+        if (isMounted) {
+          setPdfUrl(url);
+          prevUrl.current = url;
+        }
 
         // Salva o PDF em base64 no formData
         const reader = new FileReader();
@@ -24,11 +35,20 @@ export default function PdfAndSignaturePreview({ formData, onPdfGenerated }) {
       } catch (err) {
         alert("Erro ao gerar PDF");
       }
-      setLoading(false);
+      if (isMounted) setLoading(false);
     };
     generatePdf();
+
+    // Cleanup do URL ao desmontar
+    return () => {
+      isMounted = false;
+      if (prevUrl.current) {
+        URL.revokeObjectURL(prevUrl.current);
+        prevUrl.current = null;
+      }
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formData]);
+  }, [JSON.stringify(formData)]); // Só gera novo PDF se formData realmente mudar
 
   return (
     <div className="space-y-6">
@@ -66,7 +86,7 @@ export default function PdfAndSignaturePreview({ formData, onPdfGenerated }) {
         {loading && (
           <div className="text-blue-600 font-medium">Gerando PDF...</div>
         )}
-        {pdfUrl && (
+        {pdfUrl && !loading && (
           <div className="mt-4">
             <iframe
               src={pdfUrl}
