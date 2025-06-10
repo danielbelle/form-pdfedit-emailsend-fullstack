@@ -59,7 +59,7 @@ export default function FormWizard() {
       "Formulário de Solicitação - Preencha os dados para solicitar o auxílio";
     if (currentStep === steps.length) {
       setShowSubmit(false);
-      const timer = setTimeout(() => setShowSubmit(true), 2000);
+      const timer = setTimeout(() => setShowSubmit(true), 1000);
       return () => clearTimeout(timer);
     } else {
       setShowSubmit(false);
