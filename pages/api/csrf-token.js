@@ -1,18 +1,15 @@
-// pages/api/csrf-token.js
-import { createCsrfToken } from "csrf";
+import Tokens from "csrf";
 
 export default function handler(req, res) {
-  const token = createCsrfToken();
+  const tokens = new Tokens();
+  const secret = tokens.secretSync();
+  const token = tokens.create(secret);
+
+  // Você pode salvar o secret em um cookie seguro para validar depois
+  const isDev = process.env.NODE_ENV === "development";
   res.setHeader(
     "Set-Cookie",
-    `csrfToken=${token}; HttpOnly; Secure; SameSite=Strict`
+    `csrfToken=${secret}; HttpOnly;${isDev ? "" : " Secure;"} SameSite=Strict`
   );
   res.json({ token });
 }
-
-// No seu formulário:
-fetch("/api/csrf-token")
-  .then((res) => res.json())
-  .then((data) => {
-    setCsrfToken(data.token);
-  });

@@ -4,7 +4,7 @@ import PersonalInfoStep from "./PersonalInfoStep";
 import FileUpload from "../FileUpload";
 import SignaturePad from "../SignaturePad";
 import EmailPreview from "../email/EmailPreview";
-import { number, z } from "zod";
+import { z } from "zod";
 import PdfAndSignaturePreview from "../email/PdfAndSignaturePreview";
 
 export default function FormWizard() {
@@ -28,6 +28,15 @@ export default function FormWizard() {
   });
   const [showSubmit, setShowSubmit] = useState(false);
   const signaturePadRef = useRef(null);
+  const [csrfToken, setCsrfToken] = useState("");
+
+  useEffect(() => {
+    fetch("/api/csrf-token")
+      .then((res) => res.json())
+      .then((data) => {
+        setCsrfToken(data.token);
+      });
+  }, []);
 
   // Valida todo o formulário
   const validateForm = async () => {
@@ -146,7 +155,10 @@ export default function FormWizard() {
     try {
       const response = await fetch("/api/sendEmail", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "x-csrf-token": csrfToken,
+        },
         body: JSON.stringify({
           ...formData,
           attachments,
@@ -154,6 +166,7 @@ export default function FormWizard() {
       });
       if (response.ok) {
         alert("Email enviado com sucesso!");
+        //window.location.reload();
       } else {
         alert("Falha ao enviar email.");
       }
