@@ -1,11 +1,12 @@
 import nodemailer from "nodemailer";
 import Tokens from "csrf";
 import { z } from "zod";
+import emailTemplate from "../../utils/emailTemplate";
 
 // ======================
 // Configurações de Segurança
 // ======================
-
+/*
 const EmailSchema = z.object({
   name: z.string().min(2).max(100),
   email: z.string().email(),
@@ -20,7 +21,8 @@ const EmailSchema = z.object({
     )
     .optional(),
 });
-
+*/
+const EmailSchema = z.object({});
 // 2. Domínios permitidos (CORS)
 const allowedOrigins = [
   "https://transporteviadutos.vercel.app",
@@ -74,7 +76,7 @@ async function emailHandler(req, res) {
         .json({ error: "Dados inválidos", details: parseResult.error.errors });
     }
 
-    const { name, attachments, month } = req.body;
+    const { name, attachments, month, email } = req.body;
 
     if (attachments) {
       for (const att of attachments) {
@@ -125,10 +127,9 @@ async function emailHandler(req, res) {
         name: "Formulário Transporte",
         address: process.env.REFEMAIL_SENDER_N,
       },
-      to: process.env.NEXT_PUBLIC_EMAIL_RECEIVER,
+      to: `${process.env.NEXT_PUBLIC_EMAIL_RECEIVER}, ${email}`,
       subject: `Auxílio Transporte ${month} - ${name}`,
-      text: "ba",
-      html: `ab`,
+      html: emailTemplate(name, email),
       attachments: formattedAttachments,
     });
 
