@@ -1,9 +1,25 @@
 import nodemailer from "nodemailer";
 import Tokens from "csrf";
+import { z } from "zod";
 
 // ======================
 // Configurações de Segurança
 // ======================
+
+const EmailSchema = z.object({
+  name: z.string().min(2).max(100),
+  email: z.string().email(),
+  month: z.string().min(1),
+  attachments: z
+    .array(
+      z.object({
+        filename: z.string(),
+        content: z.string(),
+        contentType: z.string(),
+      })
+    )
+    .optional(),
+});
 
 // 2. Domínios permitidos (CORS)
 const allowedOrigins = [
@@ -19,6 +35,12 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024;
 // Handler Principal
 // ======================
 async function emailHandler(req, res) {
+  if (!rateLimit(req, res, 5, 60 * 1000)) {
+    return res
+      .status(429)
+      .json({ error: "Muitas requisições, tente novamente mais tarde." });
+  }
+
   try {
     // 1. Verificação de Origem (CORS)
     const origin = req.headers.origin || req.headers.referer;
@@ -44,9 +66,16 @@ async function emailHandler(req, res) {
       return res.status(405).json({ message: "Método não permitido" });
     }
 
+    // 5. Validação de Dados
+    const parseResult = EmailSchema.safeParse(req.body);
+    if (!parseResult.success) {
+      return res
+        .status(400)
+        .json({ error: "Dados inválidos", details: parseResult.error.errors });
+    }
+
     const { name, attachments, month } = req.body;
 
-    // 5. Validação de Anexos
     if (attachments) {
       for (const att of attachments) {
         if (!ALLOWED_MIME_TYPES.includes(att.contentType)) {
@@ -56,6 +85,12 @@ async function emailHandler(req, res) {
         }
         if (Buffer.from(att.content, "base64").length > MAX_FILE_SIZE) {
           return res.status(400).json({ error: "Arquivo excede 5MB" });
+        }
+        // Validação extra: nome do arquivo
+        if (!att.filename.endsWith(".pdf")) {
+          return res
+            .status(400)
+            .json({ error: "Apenas arquivos PDF são permitidos" });
         }
       }
     }
@@ -117,4 +152,34 @@ async function emailHandler(req, res) {
     });
   }
 }
+
+const rateLimitStore = new Map();
+
+const rateLimitMultiplier = process.env.NODE_ENV === "development" ? 1 : 15;
+
+function rateLimit(
+  req,
+  res,
+  limit = 5,
+  windowMs = rateLimitMultiplier * 60 * 1000
+) {
+  const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+  const now = Date.now();
+  const entry = rateLimitStore.get(ip) || { count: 0, last: now };
+
+  if (now - entry.last > windowMs) {
+    // Nova janela de tempo
+    rateLimitStore.set(ip, { count: 1, last: now });
+    return true;
+  }
+
+  if (entry.count >= limit) {
+    return false;
+  }
+
+  entry.count += 1;
+  rateLimitStore.set(ip, entry);
+  return true;
+}
+
 export default emailHandler;
