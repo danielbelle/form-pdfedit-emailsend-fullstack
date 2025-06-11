@@ -1,9 +1,9 @@
-import FormWizard from "../components/form/FormWizard";
+import IndexWizard from "@/components/IndexWizard";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <FormWizard />
+    <div>
+      <IndexWizard />
     </div>
   );
 }

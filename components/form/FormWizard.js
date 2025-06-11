@@ -189,29 +189,44 @@ export default function FormWizard() {
     <div className="md:max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-md max-w-xl">
       {/* Progress Steps */}
       <div className="flex justify-between mb-8">
-        {steps.map((step) => (
-          <div key={step.id} className="flex flex-col items-center">
-            <div
-              className={`w-10 h-10 rounded-full flex items-center justify-center 
-              ${
-                currentStep >= step.id
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 text-gray-600"
-              }`}
+        {steps.map((step) => {
+          const isStepAllowed = step.id <= currentStep + 1;
+          return (
+            <button
+              key={step.id}
+              type="button"
+              onClick={() => {
+                if (isStepAllowed) setCurrentStep(step.id);
+              }}
+              className="flex flex-col items-center focus:outline-none group"
+              tabIndex={0}
             >
-              {step.id}
-            </div>
-            <span
-              className={`mt-2 text-sm ${
-                currentStep >= step.id
-                  ? "font-bold text-blue-500"
-                  : "text-gray-500"
-              }`}
-            >
-              {step.name}
-            </span>
-          </div>
-        ))}
+              <div
+                className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-200
+                  ${
+                    currentStep >= step.id
+                      ? "bg-blue-500 text-white group-hover:bg-blue-600"
+                      : "bg-gray-200 text-gray-600 group-hover:bg-gray-300"
+                  }
+                  ${isStepAllowed ? "cursor-pointer" : "cursor-not-allowed"}
+                `}
+              >
+                {step.id}
+              </div>
+              <span
+                className={`mt-2 text-sm transition-colors duration-200
+                  ${
+                    currentStep >= step.id
+                      ? "font-bold text-blue-500 group-hover:text-blue-600"
+                      : "text-gray-500 group-hover:text-gray-700"
+                  }
+                `}
+              >
+                {step.name}
+              </span>
+            </button>
+          );
+        })}
       </div>
 
       <form onSubmit={handleSubmit}>
