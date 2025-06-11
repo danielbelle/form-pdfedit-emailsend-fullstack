@@ -1,14 +1,12 @@
 "use client";
-import { useState, useEffect, useRef, use } from "react";
+import { useState, useEffect, useRef } from "react";
 import PersonalInfoStep from "./PersonalInfoStep";
 import FileUpload from "../FileUpload";
 import SignaturePad from "../SignaturePad";
 import EmailPreview from "../email/EmailPreview";
-import { z } from "zod";
 import PdfAndSignaturePreview from "../email/PdfAndSignaturePreview";
 
 export default function FormWizard() {
-  const [errors, setErrors] = useState({});
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     name: "",
@@ -37,24 +35,6 @@ export default function FormWizard() {
         setCsrfToken(data.token);
       });
   }, []);
-
-  // Valida todo o formulário
-  const validateForm = async () => {
-    try {
-      await formSchema.parseAsync(formData);
-      setErrors({});
-      return true;
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        const newErrors = {};
-        error.errors.forEach((err) => {
-          newErrors[err.path[0]] = err.message;
-        });
-        setErrors(newErrors);
-      }
-      return false;
-    }
-  };
 
   const steps = [
     { id: 1, name: "Dados para Preencher" },
@@ -116,6 +96,7 @@ export default function FormWizard() {
     }));
     setCurrentStep((prev) => Math.max(prev - 1, 1));
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -234,8 +215,8 @@ export default function FormWizard() {
           <PersonalInfoStep
             formData={formData}
             handleChange={handleChange}
-            errors={errors}
-            setErrors={setErrors}
+            errors={{}}
+            setErrors={() => {}}
           />
         )}
         {currentStep === 2 && (

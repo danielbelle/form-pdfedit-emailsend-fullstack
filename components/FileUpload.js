@@ -1,19 +1,4 @@
 import { useState, useEffect } from "react";
-import { z } from "zod";
-
-const fileSchema = z
-  .instanceof(File)
-  .refine(
-    (file) =>
-      [
-        "application/pdf",
-        "image/png",
-        "image/jpeg",
-        "image/jpg",
-        "image/webp",
-      ].includes(file.type),
-    { message: "Selecione apenas arquivos PDF ou imagens." }
-  );
 
 export default function FileUpload({ onFileChange, value }) {
   const [files, setFiles] = useState(value || []);
@@ -26,16 +11,6 @@ export default function FileUpload({ onFileChange, value }) {
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     if (!selectedFile) return;
-
-    const result = fileSchema.safeParse(selectedFile);
-
-    if (!result.success) {
-      setError(result.error.errors[0].message);
-      e.target.value = "";
-      setFiles([]);
-      onFileChange([]);
-      return;
-    }
 
     setFiles([selectedFile]);
     setError("");
