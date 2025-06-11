@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function PersonalInfoStep({
   formData,
@@ -28,10 +28,35 @@ export default function PersonalInfoStep({
     { value: "Dezembro", label: "Dezembro" },
   ]);
 
-  const currentMonth = String(new Date().getMonth() + 2);
-  const defaultSemester = 1;
+  // Define valores padrão ao montar o componente
+  useEffect(() => {
+    if (!formData.period) {
+      handleChange({
+        target: {
+          name: "period",
+          value: semesterOptions[0].value,
+        },
+      });
+    }
+    if (!formData.month) {
+      handleChange({
+        target: {
+          name: "month",
+          value: monthOptions[0].value,
+        },
+      });
+    }
+    if (!formData.timesInMonth) {
+      handleChange({
+        target: {
+          name: "timesInMonth",
+          value: 1,
+        },
+      });
+    }
+    // eslint-disable-next-line
+  }, []);
 
-  // Função local para tratar o campo timesInMonth como número
   const handleLocalChange = (e) => {
     const { name, value } = e.target;
     const parsedValue = name === "timesInMonth" ? Number(value) : value;
@@ -169,7 +194,7 @@ export default function PersonalInfoStep({
           </label>
           <select
             name="period"
-            value={formData.period || defaultSemester}
+            value={formData.period || semesterOptions[0].value}
             onChange={(e) =>
               handleChange({
                 target: {
@@ -197,7 +222,7 @@ export default function PersonalInfoStep({
           </label>
           <select
             name="month"
-            value={formData.month || currentMonth}
+            value={formData.month || monthOptions[0].value}
             onChange={handleChange}
             className="w-full p-2 border border-gray-300 rounded"
           >
@@ -219,7 +244,7 @@ export default function PersonalInfoStep({
           <input
             type="number"
             name="timesInMonth"
-            value={formData.timesInMonth || ""}
+            value={formData.timesInMonth || 1}
             onChange={handleLocalChange}
             min="1"
             max="31"
