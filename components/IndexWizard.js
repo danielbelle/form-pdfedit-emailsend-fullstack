@@ -4,7 +4,7 @@ export default function IndexWizard() {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 via-white to-blue-100">
       {/* Header responsivo com logo à esquerda e texto centralizado */}
-      <header className="w-full px-4 flex flex-col md:flex-row items-center md:justify-between shadow-none bg-white">
+      <header className="w-full px-4 flex flex-col md:flex-row items-center md:justify-between shadow-none">
         {/* Logo à esquerda */}
         <a
           href="https://viadutos.rs.gov.br/"
@@ -36,9 +36,9 @@ export default function IndexWizard() {
       </main>
 
       {/* Footer simples */}
-      <footer className="w-full py-4 px-6 text-center text-gray-500 text-sm bg-white">
-        © {new Date().getFullYear()} Prefeitura Municipal de Viadutos. Todos os
-        direitos reservados.
+      <footer className="w-full py-5 px-6 text-center text-gray-500 text-sm ">
+        © {new Date().getFullYear()} Daniel Henrique Bellé. Todos os direitos
+        reservados.
       </footer>
     </div>
   );
