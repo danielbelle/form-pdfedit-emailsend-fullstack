@@ -100,8 +100,8 @@ export default function PdfAndSignaturePreview({ formData, onPdfGenerated }) {
                 Baixar PDF Gerado
               </a>
               <div className="text-xs text-gray-500 mt-2">
-                Visualização de PDF não suportada em alguns celulares. Clique para
-                baixar.
+                Visualização de PDF não suportada em alguns celulares. Clique
+                para baixar.
               </div>
             </div>
             <div className="hidden md:block">
@@ -121,18 +121,15 @@ export default function PdfAndSignaturePreview({ formData, onPdfGenerated }) {
           <div className="mt-6">
             <h4 className="font-semibold mb-2">Comprovante Anexado:</h4>
             {formData.attachments.map((file, idx) => {
-              // Gera URL local apenas se não existir
               let url = file.url;
               if (!url) {
                 url = URL.createObjectURL(file);
               }
-              // Permite apenas blobs locais ou arquivos sem http/https
               const isSafeUrl =
                 url.startsWith("blob:") ||
                 url.startsWith("data:") ||
                 (!url.startsWith("http://") && !url.startsWith("https://"));
 
-              // Se não for seguro, apenas mostra o nome do arquivo
               if (!isSafeUrl) {
                 return (
                   <div key={idx} className="text-red-600">
@@ -142,42 +139,50 @@ export default function PdfAndSignaturePreview({ formData, onPdfGenerated }) {
                 );
               }
 
-              // Se for imagem, mostrar preview
-              if (
-                file.type &&
-                (file.type.startsWith("image/") ||
-                  file.name.match(/\.(png|jpg|jpeg|webp)$/i))
-              ) {
-                return (
-                  <img
-                    key={idx}
-                    src={url}
-                    alt={file.name}
-                    className="mb-2 max-h-48 border rounded"
-                    style={{ maxWidth: 300 }}
-                  />
-                );
-              }
-              // Se for PDF, mostrar embed
-              if (
-                file.type === "application/pdf" ||
-                file.name.match(/\.pdf$/i)
-              ) {
-                return (
-                  <iframe
-                    key={idx}
-                    src={url}
-                    title={file.name}
-                    width="100%"
-                    height="400px"
-                    className="border rounded mb-2"
-                  />
-                );
-              }
-              // Caso não reconhecido, apenas mostra o nome
+              // Mobile: botão para download
               return (
-                <div key={idx} className="text-gray-700">
-                  {file.name}
+                <div key={idx}>
+                  <div className="block md:hidden mb-2">
+                    <a
+                      href={url}
+                      download={file.name}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                    >
+                      Baixar {file.name}
+                    </a>
+                  </div>
+                  {/* Imagem preview (desktop) */}
+                  {file.type &&
+                    (file.type.startsWith("image/") ||
+                      file.name.match(/\.(png|jpg|jpeg|webp)$/i)) && (
+                      <img
+                        src={url}
+                        alt={file.name}
+                        className="hidden md:block mb-2 max-h-48 border rounded"
+                        style={{ maxWidth: 300 }}
+                      />
+                    )}
+                  {/* PDF preview (desktop) */}
+                  {(file.type === "application/pdf" ||
+                    file.name.match(/\.pdf$/i)) && (
+                    <iframe
+                      src={url}
+                      title={file.name}
+                      width="100%"
+                      height="400px"
+                      className="hidden md:block border rounded mb-2"
+                    />
+                  )}
+                  {/* Nome do arquivo se não for imagem/pdf */}
+                  {!(
+                    (file.type &&
+                      (file.type.startsWith("image/") ||
+                        file.name.match(/\.(png|jpg|jpeg|webp)$/i))) ||
+                    file.type === "application/pdf" ||
+                    file.name.match(/\.pdf$/i)
+                  ) && <div className="text-gray-700">{file.name}</div>}
                 </div>
               );
             })}
