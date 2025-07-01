@@ -244,7 +244,7 @@ export default function PersonalInfoStep({
           <input
             type="number"
             name="timesInMonth"
-            value={formData.timesInMonth || 1}
+            value={formData.timesInMonth || NaN}
             onChange={handleLocalChange}
             min="1"
             max="31"

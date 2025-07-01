@@ -88,13 +88,31 @@ export default function PdfAndSignaturePreview({ formData, onPdfGenerated }) {
         )}
         {pdfUrl && !loading && (
           <div className="mt-4">
-            <iframe
-              src={pdfUrl}
-              title="Pré-visualização do PDF"
-              width="100%"
-              height="500px"
-              style={{ border: "1px solid #ccc", borderRadius: 8 }}
-            />
+            {/* Desktop: mostra o iframe, Mobile: mostra botão de download */}
+            <div className="block md:hidden">
+              <a
+                href={pdfUrl}
+                download="auxilio-transporte.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              >
+                Baixar PDF Gerado
+              </a>
+              <div className="text-xs text-gray-500 mt-2">
+                Visualização de PDF não suportada em alguns celulares. Clique para
+                baixar.
+              </div>
+            </div>
+            <div className="hidden md:block">
+              <iframe
+                src={pdfUrl}
+                title="Pré-visualização do PDF"
+                width="100%"
+                height="500px"
+                style={{ border: "1px solid #ccc", borderRadius: 8 }}
+              />
+            </div>
           </div>
         )}
 
