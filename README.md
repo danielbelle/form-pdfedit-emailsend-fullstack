@@ -34,7 +34,7 @@ gerado e assinado por e-mail.
   - `pdf-lib` (manipulação de PDF)
   - `signature_pad` (captura de assinatura digital)
   - `nodemailer` (envio de e-mails via SMTP)
-  - `zod` (validação de dados)
+  - `yup` (validação de dados)
 - **Hospedagem**:
   - Vercel
 
@@ -44,23 +44,37 @@ gerado e assinado por e-mail.
 
 ```
 components/
-  ├── form/                # Passos do formulário
-  ├── email/               # Pré-visualização de email e PDF
-  ├── FileUpload.js        # Upload de arquivos
-  └── SignaturePad.js      # Assinatura digital
+  ├── form/
+  │   ├── FormWizard.js
+  │   ├── PersonalInfoStep.js
+  │   └── FormSchema.js
+  ├── email/
+  │   ├── EmailPreview.js
+  │   └── PdfAndSignaturePreview.js
+  ├── FileUpload.js
+  └── SignaturePad.js
 
 pages/
-  ├── index.js             # Página principal
-  └── api/
-      ├── sendEmail.js     # API de envio de email
-      └── csrf-token.js    # API de CSRF
+  ├── api/
+  │   ├── csrf-token.js
+  │   └── sendEmail.js
+  ├── _app.js
+  ├── _document.js
+  └── index.js
 
 public/
-  └── template.pdf         # Modelo de PDF
+  ├── favicon.ico
+  ├── Lei-n-2.721-2011-atualizada.pdf
+  ├── Lei-n-3.647-2025.pdf
+  ├── logo-prefeitura.png
+  └── template.pdf
 
 utils/
-  ├── editPdf.js           # Função de preenchimento do PDF
-  └── emailTemplate.js     # Template HTML do email
+  ├── editPdf.js
+  └── emailTemplate.js
+
+README.md
+package.json
 ```
 
 ---
@@ -200,5 +214,3 @@ contato:
 - **Nome**: Daniel Henrique Bellé
 - **E-mail**: henrique.danielb@gmail.com
 - **LinkedIn**: https://www.linkedin.com/in/danielbelle/
-
----
