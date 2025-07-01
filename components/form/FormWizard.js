@@ -5,6 +5,7 @@ import FileUpload from "../FileUpload";
 import SignaturePad from "../SignaturePad";
 import EmailPreview from "../email/EmailPreview";
 import PdfAndSignaturePreview from "../email/PdfAndSignaturePreview";
+import { formSchema } from "./FormSchema";
 
 export default function FormWizard() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -13,11 +14,11 @@ export default function FormWizard() {
     email: "",
     docRG: "",
     docCPF: "",
-    period: "",
+    period: 1,
     institution: "",
     course: "",
     month: "",
-    timesInMonth: "",
+    timesInMonth: "22", 
     city: "",
     phone: "",
     sign: "",
@@ -25,6 +26,7 @@ export default function FormWizard() {
     inputDocument: null,
   });
   const [showSubmit, setShowSubmit] = useState(false);
+  const [errors, setErrors] = useState({});
   const signaturePadRef = useRef(null);
   const [csrfToken, setCsrfToken] = useState("");
 
@@ -56,11 +58,15 @@ export default function FormWizard() {
   }, [currentStep, steps.length]);
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-
+    const { name, value, type } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [name]:
+        name === "timesInMonth"
+          ? value 
+          : (type === "number" || name === "period")
+          ? value === "" ? "" : Number(value)
+          : value,
     }));
   };
 
@@ -72,12 +78,15 @@ export default function FormWizard() {
     setFormData((prev) => ({ ...prev, signature }));
   };
 
-  const nextStep = () => {
-    if (currentStep === 2) {
-      saveSignatureBetweenSteps();
+  const nextStep = async () => {
+    const valid = await validateForm();
+    if (valid) {
+      if (currentStep === 2) {
+        saveSignatureBetweenSteps();
+      }
+      setFormData((prev) => ({ ...prev }));
+      setCurrentStep((prev) => Math.min(prev + 1, steps.length));
     }
-    setFormData((prev) => ({ ...prev }));
-    setCurrentStep((prev) => Math.min(prev + 1, steps.length));
   };
 
   const saveSignatureBetweenSteps = () => {
@@ -166,6 +175,38 @@ export default function FormWizard() {
     });
   }
 
+  const validateForm = async () => {
+    try {
+      await formSchema.validate(formData, { abortEarly: false });
+      setErrors({});
+      return true;
+    } catch (err) {
+      if (err.inner) {
+        const formErrors = {};
+        err.inner.forEach((error) => {
+          formErrors[error.path] = error.message;
+        });
+        setErrors(formErrors);
+      }
+      return false;
+    }
+  };
+
+  // Função para trocar de step com validação se for avanço
+  const goToStep = async (targetStep) => {
+    if (targetStep === currentStep) return;
+    // Só permite ir para steps à frente se validar o formulário
+    if (targetStep > currentStep) {
+      const valid = await validateForm();
+      if (valid) {
+        setCurrentStep(targetStep);
+      }
+    } else {
+      // Permite voltar sem validação
+      setCurrentStep(targetStep);
+    }
+  };
+
   return (
     <div className="md:max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-md max-w-xl">
       {/* Progress Steps */}
@@ -177,7 +218,7 @@ export default function FormWizard() {
               key={step.id}
               type="button"
               onClick={() => {
-                if (isStepAllowed) setCurrentStep(step.id);
+                if (isStepAllowed) goToStep(step.id);
               }}
               className="flex flex-col items-center focus:outline-none group"
               tabIndex={0}
@@ -215,8 +256,8 @@ export default function FormWizard() {
           <PersonalInfoStep
             formData={formData}
             handleChange={handleChange}
-            errors={{}}
-            setErrors={() => {}}
+            errors={errors}
+            setErrors={setErrors}
           />
         )}
         {currentStep === 2 && (

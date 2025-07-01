@@ -17,6 +17,7 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "signature_pad": "^5.0.9",
+    "yup": "^1.6.1",
     "zod": "^3.25.57"
   },
   "devDependencies": {

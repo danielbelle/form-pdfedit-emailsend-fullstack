@@ -28,7 +28,6 @@ export default function PersonalInfoStep({
     { value: "Dezembro", label: "Dezembro" },
   ]);
 
-  // Define valores padrão ao montar o componente
   useEffect(() => {
     if (!formData.period) {
       handleChange({
@@ -46,31 +45,16 @@ export default function PersonalInfoStep({
         },
       });
     }
-    if (!formData.timesInMonth) {
+    if (formData.timesInMonth === undefined || formData.timesInMonth === null) {
       handleChange({
         target: {
           name: "timesInMonth",
-          value: 1,
+          value: "1", // string!
         },
       });
     }
     // eslint-disable-next-line
   }, []);
-
-  const handleLocalChange = (e) => {
-    const { name, value } = e.target;
-    const parsedValue = name === "timesInMonth" ? Number(value) : value;
-    if (name === "timesInMonth") {
-      handleChange({
-        target: {
-          name,
-          value: parsedValue,
-        },
-      });
-    } else {
-      handleChange(e);
-    }
-  };
 
   return (
     <div className="space-y-4">
@@ -78,121 +62,185 @@ export default function PersonalInfoStep({
       {/* Nome Completo */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-md font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="name"
+            className="block text-md font-medium text-gray-700 mb-1"
+          >
             Nome Completo *
           </label>
           <input
+            id="name"
             type="text"
             name="name"
+            autoComplete="name"
             value={formData.name || ""}
             onChange={handleChange}
             className="w-full p-2 border border-gray-300 rounded"
           />
+          {errors.name && (
+            <span className="text-red-500 text-xs">{errors.name}</span>
+          )}
         </div>
-        {/* Email */}
         <div>
-          <label className="block text-md font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="email"
+            className="block text-md font-medium text-gray-700 mb-1"
+          >
             Email *
           </label>
           <input
+            id="email"
             type="email"
             name="email"
+            autoComplete="email"
             value={formData.email || ""}
             onChange={handleChange}
             className="w-full p-2 border border-gray-300 rounded"
           />
+          {errors.email && (
+            <span className="text-red-500 text-xs">{errors.email}</span>
+          )}
         </div>
       </div>
       {/* RG, CPF e tel */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
-          <label className="block text-md font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="docRG"
+            className="block text-md font-medium text-gray-700 mb-1"
+          >
             RG *
           </label>
           <input
+            id="docRG"
             type="text"
             name="docRG"
+            autoComplete="off"
             value={formData.docRG || ""}
             onChange={handleChange}
             className="w-full p-2 border border-gray-300 rounded"
           />
+          {errors.docRG && (
+            <span className="text-red-500 text-xs">{errors.docRG}</span>
+          )}
         </div>
-
         <div>
-          <label className="block text-md font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="docCPF"
+            className="block text-md font-medium text-gray-700 mb-1"
+          >
             CPF *
           </label>
           <input
+            id="docCPF"
             type="text"
             name="docCPF"
+            autoComplete="off"
             value={formData.docCPF || ""}
             onChange={handleChange}
             className="w-full p-2 border border-gray-300 rounded"
             placeholder="000.000.000-00"
           />
+          {errors.docCPF && (
+            <span className="text-red-500 text-xs">{errors.docCPF}</span>
+          )}
         </div>
         <div>
-          <label className="block text-md font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="phone"
+            className="block text-md font-medium text-gray-700 mb-1"
+          >
             Telefone *
           </label>
           <input
+            id="phone"
             type="tel"
             name="phone"
+            autoComplete="tel"
             value={formData.phone || ""}
             onChange={handleChange}
             className="w-full p-2 border border-gray-300 rounded"
           />
+          {errors.phone && (
+            <span className="text-red-500 text-xs">{errors.phone}</span>
+          )}
         </div>
       </div>
 
       {/* Cidade, Instituição e Curso */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
-          <label className="block text-md font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="city"
+            className="block text-md font-medium text-gray-700 mb-1"
+          >
             Cidade Transporte *
           </label>
           <input
+            id="city"
             type="text"
             name="city"
+            autoComplete="address-level2"
             value={formData.city || ""}
             onChange={handleChange}
             className="w-full p-2 border border-gray-300 rounded"
           />
+          {errors.city && (
+            <span className="text-red-500 text-xs">{errors.city}</span>
+          )}
         </div>
-
         <div>
-          <label className="block text-md font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="institution"
+            className="block text-md font-medium text-gray-700 mb-1"
+          >
             Instituição *
           </label>
           <input
+            id="institution"
             type="text"
             name="institution"
+            autoComplete="organization"
             value={formData.institution || ""}
             onChange={handleChange}
             className="w-full p-2 border border-gray-300 rounded"
           />
+          {errors.institution && (
+            <span className="text-red-500 text-xs">{errors.institution}</span>
+          )}
         </div>
-
         <div>
-          <label className="block text-md font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="course"
+            className="block text-md font-medium text-gray-700 mb-1"
+          >
             Curso *
           </label>
           <input
+            id="course"
             type="text"
             name="course"
+            autoComplete="off"
             value={formData.course || ""}
             onChange={handleChange}
             className="w-full p-2 border border-gray-300 rounded"
           />
+          {errors.course && (
+            <span className="text-red-500 text-xs">{errors.course}</span>
+          )}
         </div>
       </div>
       {/* Período (Semestre), Mês e Vezes no Mês */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
-          <label className="block text-md font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="period"
+            className="block text-md font-medium text-gray-700 mb-1"
+          >
             Semestre *
           </label>
           <select
+            id="period"
             name="period"
             value={formData.period || semesterOptions[0].value}
             onChange={(e) =>
@@ -204,6 +252,7 @@ export default function PersonalInfoStep({
               })
             }
             className="w-full p-2 border border-gray-300 rounded"
+            autoComplete="off"
           >
             <option value="" disabled>
               Selecione o semestre
@@ -214,17 +263,25 @@ export default function PersonalInfoStep({
               </option>
             ))}
           </select>
+          {errors.period && (
+            <span className="text-red-500 text-xs">{errors.period}</span>
+          )}
         </div>
 
         <div>
-          <label className="block text-md font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="month"
+            className="block text-md font-medium text-gray-700 mb-1"
+          >
             Mês *
           </label>
           <select
+            id="month"
             name="month"
             value={formData.month || monthOptions[0].value}
             onChange={handleChange}
             className="w-full p-2 border border-gray-300 rounded"
+            autoComplete="off"
           >
             <option value="" disabled>
               Selecione o mês
@@ -235,21 +292,31 @@ export default function PersonalInfoStep({
               </option>
             ))}
           </select>
+          {errors.month && (
+            <span className="text-red-500 text-xs">{errors.month}</span>
+          )}
         </div>
-
         <div>
-          <label className="block text-md font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="timesInMonth"
+            className="block text-md font-medium text-gray-700 mb-1"
+          >
             Vezes no Mês *
           </label>
           <input
+            id="timesInMonth"
             type="number"
             name="timesInMonth"
-            value={formData.timesInMonth || NaN}
-            onChange={handleLocalChange}
+            autoComplete="off"
+            value={formData.timesInMonth}
+            onChange={handleChange}
             min="1"
             max="31"
             className="w-full p-2 border border-gray-300 rounded"
           />
+          {errors.timesInMonth && (
+            <span className="text-red-500 text-xs">{errors.timesInMonth}</span>
+          )}
         </div>
       </div>
     </div>
