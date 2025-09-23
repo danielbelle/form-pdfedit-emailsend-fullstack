@@ -12,6 +12,10 @@
 
 # testing
 /coverage
+<<<<<<< HEAD
+=======
+/vitest-test-results
+>>>>>>> boilerplate-main
 
 # next.js
 /.next/
@@ -23,6 +27,10 @@
 # misc
 .DS_Store
 *.pem
+<<<<<<< HEAD
+=======
+Thumbs.db
+>>>>>>> boilerplate-main
 
 # debug
 npm-debug.log*
@@ -30,8 +38,19 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
+<<<<<<< HEAD
 # env files (can opt-in for committing if needed)
 .env*
+=======
+# local env files
+.env*.local
+
+# Sentry Config File
+.env.sentry-build-plugin
+
+# local folder
+local
+>>>>>>> boilerplate-main
 
 # vercel
 .vercel
@@ -39,4 +58,20 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+<<<<<<< HEAD
 .vscode
+=======
+
+# Database
+*.db
+
+# storybook
+storybook-static
+*storybook.log
+build-archive.log
+
+# playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/
+>>>>>>> boilerplate-main
