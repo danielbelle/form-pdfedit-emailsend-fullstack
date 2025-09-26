@@ -1,4 +1,4 @@
-# 🚗 Sistema de Solicitação de Auxílio Transporte — Viadutos
+# 🚗 V1 Sistema de Solicitação de Auxílio Transporte — Viadutos
 
 ## 📝 Descrição do Projeto
 
@@ -7,6 +7,17 @@ digital, eliminando a necessidade de impressão, assinatura manual e entrega
 presencial de documentos. O fluxo é simples: o aluno preenche um formulário,
 assina digitalmente, anexa comprovantes e recebe (junto à prefeitura) o PDF
 gerado e assinado por e-mail.
+
+---
+
+## V2 TransporteApp
+
+- Repositório V2 (serverless):
+  https://github.com/danielbelle/transporteapp-serverless
+
+  Projeto refatorado com Remix (React Router v7) e adaptado para arquitetura
+  serverless na Vercel — inclui rotas API serverless, exemplos de configuração
+  de variáveis de ambiente e instruções de deploy no README do repositório.
 
 ---
 
@@ -189,7 +200,7 @@ A rota `/api/sendEmail` utiliza o Nodemailer para:
 
 ## 📌 Próximas Melhorias
 
-- [ ]
+- [x] Construir Versão 2
 
 ---
 
